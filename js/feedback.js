@@ -13,6 +13,24 @@ if (widget) {
     scale.append(option);
   }
 
+  const options = [...scale.querySelectorAll('.rating-option')];
+  const showRating = (score) => {
+    options.forEach((option, index) => option.classList.toggle('is-active', index < score));
+  };
+  const selectedRating = () => Number(form.querySelector('input[name="rating"]:checked')?.value || 0);
+
+  options.forEach((option, index) => {
+    const input = option.querySelector('input');
+    const label = option.querySelector('label');
+    label.addEventListener('mouseenter', () => showRating(index + 1));
+    label.addEventListener('focus', () => showRating(index + 1));
+    input.addEventListener('change', () => showRating(Number(input.value)));
+  });
+  scale.addEventListener('mouseleave', () => showRating(selectedRating()));
+  scale.addEventListener('focusout', (event) => {
+    if (!scale.contains(event.relatedTarget)) showRating(selectedRating());
+  });
+
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
     const data = new FormData(form);
@@ -35,6 +53,7 @@ if (widget) {
       });
       if (!response.ok) throw new Error('Feedback request failed');
       form.reset();
+      showRating(0);
       status.textContent = '謝謝你的回饋，已成功送出。';
     } catch {
       status.textContent = '暫時無法送出，請稍後再試。';
