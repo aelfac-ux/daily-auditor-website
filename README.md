@@ -1,4 +1,6 @@
-# 每日稽核 Daily Auditor
+# Arthur Agent 每日稽核
+
+Arthur Internal Daily Audit
 
 以學習、分享與未來創業為方向的個人知識網站。
 
