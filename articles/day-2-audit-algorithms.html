@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="當演算法參與企業決策，稽核必須從交易憑證延伸到資料、模型、治理與持續監控。"><title>從查核憑證到查核演算法：稽核工作的下一站｜每日稽核</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="../css/style.css"></head>
+<body class="article-page"><a class="skip-link" href="#main">跳到主要內容</a><header class="site-header"><div class="container nav-wrap"><a class="brand" href="../index.html" aria-label="每日稽核首頁"><span class="brand-mark">DA</span><span>每日稽核 <small>Daily Auditor</small></span></a><nav class="site-nav"><a href="../index.html#articles">系列文章</a><a class="nav-cta" href="mailto:aelfa.c@gmail.com">一起交流</a></nav></div></header>
+<main id="main"><header class="article-hero"><div class="container"><p class="eyebrow">AI × AUDIT · DAY 02</p><h1>從查核憑證到查核演算法：稽核工作的下一站</h1><p class="article-deck">當信用核准、價格調整、異常偵測都由模型參與決定，最後一張憑證只是結果；稽核必須開始檢查產生結果的機制。</p><div class="article-byline"><span>每日稽核編輯室</span><time datetime="2026-06-28">2026 年 6 月 28 日</time><span>約 8 分鐘閱讀</span></div></div></header>
+<article class="container article-body">
+<p class="lead">傳統稽核常從一筆交易往回追：有沒有申請、核准、驗收與付款憑證？AI 時代還要再往前一步：這筆交易為什麼會被系統選中、拒絕或標記？</p>
+<p>過去，系統多半依照人員事先寫好的規則運作：金額超過門檻就加簽、供應商未建檔就擋下。稽核人員可以讀流程、看權限、抽交易，較容易重建決策路徑。</p>
+<p>但機器學習模型可能從大量歷史資料中找出模式，輸出一個分數或建議。規則不再只是幾條清楚的 if-then；它可能散落在特徵工程、訓練資料、模型參數、人工覆核與上線後監控之間。若只查最終憑證，我們可能確認「程序有留下紀錄」，卻沒有確認「產生決定的機制是否可靠」。</p>
+<h2>演算法不是新的黑盒子藉口</h2><p>「模型太複雜，所以無法解釋」不能成為治理的終點。NIST 指出，可解釋性與可理解性有助於操作及監督者理解系統功能、輸出與潛在影響，也讓系統更容易被除錯、監控、記錄與稽核。這不代表每位稽核人員都要成為資料科學家，而是要能要求與風險相稱的證據。</p>
+<blockquote><p>稽核的問題不必是「我能不能重寫這個模型」，而是「組織能不能證明它在預定用途下持續受到控制」。</p></blockquote>
+<h2>新的查核鏈：從結果追到生命週期</h2><p>美國政府問責署（GAO）的 AI 問責框架以治理、資料、績效與監控四項原則組織查核思路。這提供了一張很實用的地圖：演算法查核不是只做一次技術測試，而是檢查整個生命週期。</p>
+<h3>一、治理：誰決定用途，誰承擔結果？</h3><ul><li>是否定義模型的目的、適用範圍與禁止用途？</li><li>業務、資訊、法遵與風險單位的責任是否清楚？</li><li>重大模型是否有核准、版本管理與退場機制？</li><li>受到不利影響的人，是否有申訴或人工覆核管道？</li></ul>
+<h3>二、資料：模型吃進去的是什麼？</h3><ul><li>資料來源是否獲得授權，品質是否符合用途？</li><li>缺漏、過時或歷史偏誤是否被辨識與處理？</li><li>訓練資料與實際使用情境是否出現落差？</li><li>敏感資料是否受到存取、留存與隱私控制？</li></ul>
+<h3>三、績效：準確，對誰準確？</h3><p>整體準確率可能掩蓋特定族群、區域或交易類型的失敗。稽核應檢視組織選擇的指標是否真正對應業務風險，包括誤判與漏判的代價、不同群體的表現差異，以及與人工或既有流程相比是否真的改善。</p>
+<h3>四、監控：上線不是結案</h3><p>市場、客戶行為與資料分布會變，模型效果也會漂移。需要監控輸入異常、績效衰退、申訴、人工推翻率與資安事件；當指標超出界線時，要有停用、回復前版或重新驗證的機制。這讓稽核從年度抽樣，逐步走向持續性保證。</p>
+<div class="action-box"><h2>一個可立即使用的訪談開場</h2><p>下次遇到 AI 或模型專案，先不要問「模型用了什麼技術」，而是請負責人用一張圖回答：</p><ol><li>輸入資料從哪裡來？</li><li>模型產生什麼輸出，交給誰使用？</li><li>哪些決策必須由人確認？</li><li>如何知道模型仍然有效？</li><li>若造成錯誤影響，如何發現、補救與追責？</li></ol><p>這五題通常能快速暴露責任空白與證據缺口，再決定是否需要資料科學或資安專家加入。</p></div>
+<h2>稽核人員要懂多少技術？</h2><p>答案不是「所有人都要會寫模型」，也不是「交給 IT 稽核就好」。每位稽核人員至少需要共同語言：資料如何成為輸入、模型如何被驗證、輸出如何進入流程、人工如何介入、效果如何被監控。高風險或高複雜度案件，再由資料、模型、法律或資安專家補足深度。</p><p>這就像財務稽核不要求每個人設計 ERP，卻不能不理解總帳、介面與權限。未來的稽核團隊也會採取類似分工：廣泛的 AI 風險素養，加上按風險調度的專門能力。</p>
+<h2>結語：憑證仍重要，但已經不夠</h2><p>憑證證明一件事發生過；演算法治理則要證明，讓事情發生的機制在設計與運作上都值得信任。稽核工作的下一站，不是放棄抽樣與文件，而是把查核鏈往前延伸到資料、模型與決策，再往後延伸到影響、申訴與持續監控。</p><p>當決策方式改變，保證方式也必須改變。這不是稽核專業被科技取代，而是稽核專業開始進入更接近決策核心的位置。</p>
+<section class="sources"><h2>延伸閱讀</h2><ul><li><a href="https://www.gao.gov/products/gao-21-519sp">U.S. GAO：Artificial Intelligence Accountability Framework</a></li><li><a href="https://airc.nist.gov/airmf-resources/airmf/3-sec-characteristics/">NIST AIRC：AI Risks and Trustworthiness</a></li><li><a href="https://www.theiia.org/en/content/tools/professional/2023/the-iias-updated-ai-auditing-framework/">The IIA：Artificial Intelligence Auditing Framework</a></li></ul></section>
+<a class="next-article" href="../index.html#articles"><small>下一篇 · DAY 03 · 即將發布</small><strong>AI 不會取代稽核，但會強化會用 AI 的稽核人員 →</strong></a>
+</article></main><footer><div class="container footer-wrap"><p>© <span id="year"></span> 每日稽核 Daily Auditor</p><p>持續學習，持續改善。</p></div></footer><script src="../js/main.js"></script></body></html>
