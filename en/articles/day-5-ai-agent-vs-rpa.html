@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>What Is an AI Agent—and How Is It Different from RPA? | Arthur Agent</title>
+  <meta name="description" content="A practical auditor-friendly comparison of AI agents and RPA, explained with code and a greenwashing review example.">
+  <link rel="canonical" href="https://aelfac-ux.github.io/daily-auditor-website/en/articles/day-5-ai-agent-vs-rpa.html">
+  <link rel="alternate" hreflang="en" href="https://aelfac-ux.github.io/daily-auditor-website/en/articles/day-5-ai-agent-vs-rpa.html">
+  <link rel="alternate" hreflang="zh-Hant" href="https://aelfac-ux.github.io/daily-auditor-website/articles/day-5-ai-agent-vs-rpa.html">
+  <link rel="alternate" hreflang="x-default" href="https://aelfac-ux.github.io/daily-auditor-website/articles/day-5-ai-agent-vs-rpa.html">
+  <link rel="stylesheet" href="../../css/style.css?v=9">
+  <link rel="stylesheet" href="../../css/features.css?v=2">
+  <link rel="stylesheet" href="../../css/day5.css?v=1">
+  <link rel="stylesheet" href="../../css/language.css?v=1">
+</head>
+<body class="article-page" data-article-slug="day-5-ai-agent-vs-rpa">
+  <header class="site-header"><div class="container nav-wrap"><a class="brand" href="../index.html">ARTHUR AGENT</a><nav><a href="../index.html#articles">Articles</a><a href="../index.html#about">About</a></nav></div></header>
+  <main id="main" class="article-shell">
+    <article class="container article-content">
+      <p class="eyebrow">AI × AUDIT · DAY 05</p>
+      <h1>What Is an AI Agent—and How Is It Different from RPA?</h1>
+      <p class="article-lead">RPA follows a charted route. An AI agent reads the weather, chooses a tool, and adjusts course. Sensible captains still keep a human at the helm.</p>
+      <p class="article-meta">Arthur Agent Editorial Desk · June 30, 2026 · 7 min read</p>
+      <img class="article-hero" src="../../images/day-5-agent-vs-rpa.svg" alt="RPA following fixed steps while an AI agent observes, reasons, acts, and checks">
+
+      <h2>A practical case: screening for greenwashing</h2>
+      <p>Suppose an auditor must compare an annual report, sustainability report, ESG website, and investor presentation. The question is simple: does the same ESG metric tell the same story everywhere?</p>
+      <p>The files are not simple. Labels change, pages move, tables become images, and boundaries hide in footnotes. That is where the difference between automation and agency becomes useful.</p>
+
+      <h2>RPA: reliable hands on a fixed route</h2>
+      <p>Robotic Process Automation executes explicit, repeatable rules. If the screen, file name, and workflow stay stable, it is fast and predictable.</p>
+      <pre><code>for company in companies:
+    open_portal(company)
+    download("annual-report.pdf")
+    download("sustainability-report.pdf")
+    save_to(company.folder)</code></pre>
+      <p>If the website changes the button label, however, the robot may stare at the new sign like a sailor insisting the old pier is still there.</p>
+
+      <h2>AI agent: goal, tools, feedback loop</h2>
+      <p>An agent receives a goal, observes the situation, selects tools, evaluates results, and decides what to do next.</p>
+      <pre><code>goal = "Find material ESG disclosure inconsistencies"
+
+while not enough_evidence:
+    documents = search_public_sources()
+    metrics = extract_metrics(documents)
+    differences = compare(metrics)
+    evidence = validate_boundaries(differences)
+
+return draft_findings(evidence)</code></pre>
+      <p>The code is conceptual, but the loop matters: <strong>observe → reason → act → check</strong>. The agent can adapt when a metric uses a new label or when a footnote changes the interpretation.</p>
+
+      <h2>RPA and AI agents at a glance</h2>
+      <div class="table-wrap"><table><thead><tr><th>Question</th><th>RPA</th><th>AI agent</th></tr></thead><tbody>
+        <tr><td>How does it work?</td><td>Follows predefined steps</td><td>Pursues a goal through a decision loop</td></tr>
+        <tr><td>Best input</td><td>Stable, structured data</td><td>Mixed and partly unstructured data</td></tr>
+        <tr><td>When something changes</td><td>Often stops or misfires</td><td>May adapt within permitted boundaries</td></tr>
+        <tr><td>Main risk</td><td>Silent process failure</td><td>Confident but unsupported judgment</td></tr>
+        <tr><td>Audit control</td><td>Rule and exception logs</td><td>Evidence, tool, prompt, and approval logs</td></tr>
+      </tbody></table></div>
+
+      <h2>The strongest crew is usually hybrid</h2>
+      <p>Use RPA for deterministic chores: downloading files, renaming them, moving data, and triggering scheduled jobs. Use an agent for interpreting documents, matching similar indicators, explaining possible differences, and preparing questions.</p>
+      <p>Then place a human review gate before any conclusion or publication. Autonomy without boundaries is not innovation; it is a loose cannon.</p>
+
+      <h2>What an auditor should log</h2>
+      <ul>
+        <li>The goal and scope given to the agent</li>
+        <li>Documents, tools, and model versions used</li>
+        <li>Evidence behind each proposed finding</li>
+        <li>Exceptions, retries, and discarded paths</li>
+        <li>The human approver and final decision</li>
+      </ul>
+
+      <h2>Three questions before launch</h2>
+      <ol>
+        <li><strong>Is the route stable?</strong> If yes, RPA may be enough.</li>
+        <li><strong>Does the work require interpretation?</strong> If yes, an agent may help.</li>
+        <li><strong>Can every important result be traced to evidence?</strong> If no, do not let it sail alone.</li>
+      </ol>
+
+      <blockquote>RPA automates the steps. An AI agent helps navigate the objective. Audit governance decides how far it may sail.</blockquote>
+
+      <h2>Further reading</h2>
+      <ul><li><a href="https://www.uipath.com/rpa/robotic-process-automation" target="_blank" rel="noopener">UiPath: What is RPA?</a></li><li><a href="https://openai.github.io/openai-agents-python/" target="_blank" rel="noopener">OpenAI Agents SDK</a></li><li><a href="https://modelcontextprotocol.io/introduction" target="_blank" rel="noopener">Model Context Protocol</a></li></ul>
+    </article>
+    <section class="feedback-widget" data-article-slug="day-5-ai-agent-vs-rpa"><h2>Was this voyage useful?</h2><p>Leave a quick rating for the editorial crew.</p><form><fieldset><legend>Your rating</legend><div class="rating-scale"></div></fieldset><label>Comment (optional)<textarea name="comment" maxlength="2000" rows="4"></textarea></label><button class="button primary" type="submit">Send feedback</button><p class="feedback-status" role="status"></p></form></section>
+    <nav class="article-pager"><a href="day-4-auditor-second-brain.html">← Day 04</a><a href="../index.html#articles">All articles →</a></nav>
+  </main>
+  <script src="../../js/main.js?v=7"></script><script type="module" src="../../js/feedback.js?v=4"></script><script type="module" src="../../js/analytics.js?v=1"></script><script src="../../js/language.js?v=1"></script>
+</body>
+</html>

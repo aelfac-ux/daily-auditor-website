@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://aelfac-ux.github.io/daily-auditor-website/sitemap.xml

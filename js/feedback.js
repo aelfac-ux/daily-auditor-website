@@ -1,5 +1,6 @@
 import { SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY } from './supabase-config.js';
 
+const isEnglish = document.documentElement.lang.toLowerCase().startsWith('en');
 const widget = document.querySelector('.feedback-widget');
 if (widget) {
   const form = widget.querySelector('form');
@@ -9,7 +10,7 @@ if (widget) {
   for (let score = 1; score <= 10; score += 1) {
     const option = document.createElement('span');
     option.className = 'rating-option';
-    option.innerHTML = `<input id="rating-${score}" type="radio" name="rating" value="${score}" required><label for="rating-${score}" title="${score} 分">★<small>${score}</small></label>`;
+    option.innerHTML = `<input id="rating-${score}" type="radio" name="rating" value="${score}" required><label for="rating-${score}" title="${score} ${isEnglish ? 'points' : '分'}">★<small>${score}</small></label>`;
     scale.append(option);
   }
 
@@ -38,7 +39,7 @@ if (widget) {
     const comment = String(data.get('comment') || '').trim();
     const button = form.querySelector('button[type="submit"]');
     button.disabled = true;
-    status.textContent = '正在送出…';
+    status.textContent = isEnglish ? 'Sending…' : '正在送出…';
 
     try {
       const response = await fetch(`${SUPABASE_URL}/rest/v1/article_feedback`, {
@@ -54,9 +55,9 @@ if (widget) {
       if (!response.ok) throw new Error('Feedback request failed');
       form.reset();
       showRating(0);
-      status.textContent = '謝謝你的回饋，已成功送出。';
+      status.textContent = isEnglish ? 'Thanks—your feedback is aboard.' : '謝謝你的回饋，已成功送出。';
     } catch {
-      status.textContent = '暫時無法送出，請稍後再試。';
+      status.textContent = isEnglish ? 'Unable to send right now. Please try again later.' : '暫時無法送出，請稍後再試。';
     } finally {
       button.disabled = false;
     }
