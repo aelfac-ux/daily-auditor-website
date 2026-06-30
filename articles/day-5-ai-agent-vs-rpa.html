@@ -1,0 +1,52 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="用公開資訊漂綠初篩案例與 Python 概念程式，解釋 AI Agent 與 RPA 的差異、合作方式及稽核治理重點。"><title>AI Agent 是什麼？和 RPA 有何不同？｜Arthur Agent 每日稽核</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="../css/style.css?v=5"><link rel="stylesheet" href="../css/features.css?v=1"><link rel="stylesheet" href="../css/day5.css?v=1"></head>
+<body class="article-page" data-article-slug="day-5-ai-agent-vs-rpa"><a class="skip-link" href="#main">跳到主要內容</a><header class="site-header"><div class="container nav-wrap"><a class="brand" href="../index.html"><span class="brand-mark">AA</span><span>Arthur Agent 每日稽核 <small>Arthur Internal Daily Audit</small></span></a><nav class="site-nav"><a href="../index.html#articles">系列文章</a><a class="nav-cta" href="mailto:aelfa.c@gmail.com">發出訊號</a></nav></div></header>
+<main id="main"><header class="article-hero"><div class="container"><p class="eyebrow">AI × AUDIT · DAY 05</p><h1>AI Agent 是什麼？和 RPA 有何不同？</h1><p class="article-deck">RPA 像照航線開船的可靠水手；AI Agent 像會看海象、選工具、遇到暗礁就改道的大副。兩者都能幹活，但別把羅盤和船槳叫成同一件事。</p><div class="article-byline"><span>Arthur Agent 編輯室</span><time datetime="2026-06-30">2026 年 6 月 30 日</time><span>約 8 分鐘閱讀</span></div></div></header>
+<article class="container article-body"><aside class="actual-case"><span>實際案例</span><strong>稽核團隊要用公開資訊初篩漂綠風險：下載年報與永續報告書，比對同年度的排放量、用水量和員工人數，再列出無法勾稽的地方。</strong><p>流程看似固定，直到第一家公司寫「總用水量」、第二家寫「取水量」，第三家把單位藏在第 87 頁。這時，照表操課的機器人開始冒煙，會判讀情境的 Agent 才剛把帽子戴正。</p></aside>
+<p class="lead">一句話分辨：RPA 執行你事先畫好的航線；AI Agent 接受目標，根據眼前情況決定下一步，再使用工具完成任務。</p>
+<figure class="article-visual"><img src="../images/day-5-agent-vs-rpa.svg" alt="RPA 固定航線與 AI Agent 動態航海迴圈比較圖"><figcaption>RPA 重視一致執行；Agent 重視觀察、決策、行動與調整。最穩的船，通常兩者都要。</figcaption></figure>
+
+<h2>先別被新名詞搶走羅盤</h2><p>RPA（Robotic Process Automation）擅長重複、規則明確、步驟穩定的工作，例如登入系統、下載檔案、搬移資料與填寫欄位。AI Agent 則由模型搭配指令、工具、護欄與執行迴圈組成；它可以根據工具回傳的結果，決定繼續、換方法、要求人工核准或結束。</p><div class="comparison-table"><div><strong>比較</strong><strong>RPA</strong><strong>AI Agent</strong></div><div><span>接到什麼</span><span>固定步驟</span><span>目標與限制</span></div><div><span>遇到例外</span><span>走預設分支或停止</span><span>判讀情境、改選工具或升級人工</span></div><div><span>最擅長</span><span>穩定、重複、可預測</span><span>非結構資料、多步推理、動態任務</span></div><div><span>主要風險</span><span>畫面或規則改了就卡住</span><span>可能誤判、亂用工具或繞太多圈</span></div></div>
+
+<h2>同一個漂綠初篩任務，RPA 怎麼做？</h2><p>先建立公司清單與固定下載網址，再按既定欄位擷取數字、比對差異、輸出 Excel。只要文件格式穩定，它會像守時的水手：不抱怨、不分心，也不會突然研究海怪。</p><div class="code-example"><span>CODE 01 · 固定規則流程</span><pre><code>for company in companies:
+    annual = download(company.annual_report_url)
+    esg = download(company.esg_report_url)
+
+    for metric in ["scope_1", "scope_2", "water", "employees"]:
+        left = extract_fixed_field(annual, metric)
+        right = extract_fixed_field(esg, metric)
+
+        if left != right:
+            write_exception(company, metric, left, right)</code></pre></div><p>這段 code 的優點是可預測、好測試、容易留痕；缺點也很誠實：欄位名稱、頁碼或版型一變，<code>extract_fixed_field()</code> 就可能兩手一攤。</p>
+
+<h2>換 AI Agent 上甲板，差別在哪？</h2><p>Agent 不只收到步驟，而是收到任務：「找出同公司、同年度、同 ESG 指標在公開文件中的重大差異，保留來源與頁碼，不足以判斷時交給人。」接著它重複四件事：觀察、決定、使用工具、檢查結果。</p><div class="code-example agent-code"><span>CODE 02 · Agent 概念迴圈</span><pre><code>goal = "找出公開 ESG 文件中無法合理勾稽的差異"
+state = {"goal": goal, "evidence": [], "turn": 0}
+
+while state["turn"] &lt; 8:
+    observation = inspect_documents(state)
+    action = planner.choose_next_action(
+        observation,
+        tools=[search_reports, extract_metric,
+               normalize_unit, compare_values]
+    )
+    result = action.run()
+    state["evidence"].append(result)
+    state["turn"] += 1
+
+    if action.needs_human_review or evidence_is_enough(state):
+        break
+
+export_workpaper(state)</code></pre></div><p>這不是一段可直接連上公司資料的成品，而是 Agent 架構的縮圖：它有目標、有工具、有狀態、有停止條件，也知道何時把舵交回人類。沒有停止條件的 Agent，不叫自主，叫迷航。</p>
+
+<h2>漂綠初篩時，Agent 可以多做哪一步？</h2><ol><li><strong>辨識相似指標：</strong>判斷「總用水量」與「取水量」可能相關，但先標記口徑風險，不擅自當成相同。</li><li><strong>補齊脈絡：</strong>尋找單位、年度、揭露邊界、頁碼與第三方確信註記。</li><li><strong>動態選工具：</strong>表格可直接解析就讀表格；掃描 PDF 則改走 OCR；缺頁碼就回到原文件搜尋。</li><li><strong>分級例外：</strong>四捨五入列低風險；可能是邊界差異列中風險；重大落差且無調節表則升級人工。</li></ol><blockquote><p>雷達可以說前方有東西；船長仍要判斷，那是島、礁石，還是一份把範疇一和範疇二加錯的永續報告書。</p></blockquote>
+
+<h2>所以 Agent 會取代 RPA 嗎？</h2><p>不必急著把可靠水手丟下船。最實用的組合通常是：Agent 負責讀懂任務、處理例外與決定下一步；RPA 負責登入、下載、搬檔、輸入系統等需要穩定執行的動作；人則負責核准敏感操作與做最終稽核判斷。</p><div class="agent-loop"><span>AI Agent<br><small>規劃與判讀</small></span><b>→</b><span>RPA／工具<br><small>可靠執行</small></span><b>→</b><span>稽核人員<br><small>覆核與負責</small></span></div>
+
+<h2>稽核 Agent 上船前，先檢查五件事</h2><ul><li><strong>任務邊界：</strong>哪些網站、檔案與資料可以讀？哪些動作禁止？</li><li><strong>工具白名單：</strong>只能使用核准工具，寫入、寄信或發布前必須人工核准。</li><li><strong>證據可追溯：</strong>每個差異都要留下來源文件、頁碼、擷取值與處理步驟。</li><li><strong>停止與成本限制：</strong>設定最大回合、時間與費用，別讓它追著一張表航行到世界盡頭。</li><li><strong>人工最終判斷：</strong>Agent 負責初篩；是否構成漂綠、缺失或重大揭露風險，由稽核人員決定。</li></ul>
+
+<div class="action-box"><h2>今天的選型口訣</h2><p><strong>固定步驟交給 RPA，動態判讀交給 Agent，重大決定留給人。</strong></p><p>如果流程每次都一樣，先別為了時髦硬塞 Agent；如果文件格式混亂、例外很多、下一步要看前一步結果，那才是 Agent 值得出航的海域。</p></div>
+
+<section class="solution-case"><span>案例回航</span><h2>公開資訊漂綠初篩，最穩的做法不是二選一</h2><p>RPA 依公司清單定期下載公開文件並命名歸檔；Agent 擷取相似 ESG 指標、統一單位、保留頁碼並把差異分級；稽核人員再檢查邊界、版本與調節表。最後產出的不是「某家公司漂綠」的武斷結論，而是一份知道下一步該追什麼證據的查核清單。</p></section>
+
+<section class="sources"><h2>延伸閱讀</h2><ul><li><a href="https://www.uipath.com/rpa/robotic-process-automation">UiPath — What is Robotic Process Automation?</a></li><li><a href="https://openai.github.io/openai-agents-python/agents/">OpenAI Agents SDK — Agents</a></li><li><a href="https://openai.github.io/openai-agents-python/running_agents/">OpenAI Agents SDK — The agent loop</a></li><li><a href="https://openai.github.io/openai-agents-python/human_in_the_loop/">OpenAI Agents SDK — Human-in-the-loop</a></li><li><a href="https://mops.twse.com.tw/mops/web/index">公開資訊觀測站</a></li></ul></section>
+<section class="feedback-widget" data-article-slug="day-5-ai-agent-vs-rpa"><h2>這張航海圖有幫助嗎？</h2><p>用 1–10 分告訴我，也歡迎留下你想做成 Agent 的稽核流程。</p><form><fieldset><legend>選擇你的評分</legend><div class="rating-scale"></div></fieldset><label>補充意見（選填）<textarea name="comment" maxlength="2000" rows="4" placeholder="例如：想看公開資訊漂綠初篩 Agent 的完整實作"></textarea></label><button class="button primary" type="submit">送出回饋</button><p class="feedback-status" role="status"></p></form></section>
+<a class="next-article" href="../index.html#articles"><small>下一篇 · DAY 06 · 航線規劃中</small><strong>稽核人員如何利用 AI 節省 50% 工時</strong></a></article></main><footer><div class="container footer-wrap"><p>© <span id="year"></span> Arthur Agent 每日稽核</p><p>Arthur Internal Daily Audit</p></div></footer><script src="../js/main.js"></script><script type="module" src="../js/feedback.js?v=3"></script><script type="module" src="../js/analytics.js?v=1"></script></body></html>

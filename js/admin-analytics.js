@@ -8,7 +8,8 @@ const labels = {
   'day-1-ai-auditor-beyond-prompt': 'DAY 01｜AI 時代來了，為何不能只學 Prompt？',
   'day-2-audit-algorithms': 'DAY 02｜從查核憑證到查核演算法',
   'day-3-ai-private-local-audit': 'DAY 03｜本機 Python 守住公司資料',
-  'day-4-auditor-second-brain': 'DAY 04｜稽核人員的第二大腦'
+  'day-4-auditor-second-brain': 'DAY 04｜稽核人員的第二大腦',
+  'day-5-ai-agent-vs-rpa': 'DAY 05｜AI Agent 與 RPA 有何不同？'
 };
 
 function escapeHtml(value) {
