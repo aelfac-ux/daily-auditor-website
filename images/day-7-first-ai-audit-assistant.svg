@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-labelledby="title desc">
+<title id="title">召喚第一個 AI 稽核助手的五關路線圖</title><desc id="desc">從安裝 Python、建置 VS Code、請 AI 撰寫程式、本機執行，到將去識別化錯誤交給 AI 協助除錯。</desc>
+<rect width="1200" height="680" fill="#f7f3e8"/><text x="70" y="72" fill="#173c36" font-family="sans-serif" font-size="34" font-weight="700">召喚第一個 AI 稽核助手｜五關路線圖</text><text x="70" y="108" fill="#66736f" font-family="sans-serif" font-size="17">雲端協助寫方法；公司資料與程式執行留在本機</text>
+<path d="M140 345 C250 170 370 520 485 345 S720 170 835 345 S1040 520 1085 345" fill="none" stroke="#c8d9cc" stroke-width="18" stroke-linecap="round"/>
+<g font-family="sans-serif" text-anchor="middle"><g transform="translate(145 330)"><circle r="82" fill="#173c36"/><text y="-12" fill="#ef9e77" font-size="16" font-weight="700">第一關</text><text y="22" fill="white" font-size="22" font-weight="700">安裝 Python</text><text y="49" fill="#c6d8d0" font-size="14">確認版本</text></g>
+<g transform="translate(365 418)"><circle r="82" fill="#244d46"/><text y="-12" fill="#ef9e77" font-size="16" font-weight="700">第二關</text><text y="22" fill="white" font-size="22" font-weight="700">建置 VS Code</text><text y="49" fill="#c6d8d0" font-size="14">跑出第一行</text></g>
+<g transform="translate(585 260)"><circle r="90" fill="#df714c"/><text y="-14" fill="#fff3e9" font-size="16" font-weight="700">第三關</text><text y="20" fill="white" font-size="22" font-weight="700">向 AI 說明需求</text><text y="50" fill="#fff3e9" font-size="14">只用虛構資料</text></g>
+<g transform="translate(815 415)"><circle r="82" fill="#244d46"/><text y="-12" fill="#ef9e77" font-size="16" font-weight="700">第四關</text><text y="22" fill="white" font-size="22" font-weight="700">在本機執行</text><text y="49" fill="#c6d8d0" font-size="14">產出 result.csv</text></g>
+<g transform="translate(1050 315)"><circle r="82" fill="#173c36"/><text y="-12" fill="#ef9e77" font-size="16" font-weight="700">第五關</text><text y="22" fill="white" font-size="22" font-weight="700">安全除錯</text><text y="49" fill="#c6d8d0" font-size="14">驗證與修正</text></g></g>
+<rect x="270" y="560" width="660" height="62" rx="31" fill="#e7f0e9"/><text x="600" y="599" text-anchor="middle" fill="#173c36" font-family="sans-serif" font-size="19" font-weight="700">終點不是「程式能跑」，而是「結果可驗證、資料有保護」</text>
+</svg>
