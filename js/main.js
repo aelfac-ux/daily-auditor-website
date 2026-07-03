@@ -17,3 +17,17 @@ if (toggle && nav) {
 
 const year = document.querySelector('#year');
 if (year) year.textContent = new Date().getFullYear();
+
+// Entering the homepage should always begin at the hero, not at a restored
+// scroll position or an old cross-page hash. Same-page navigation still works.
+if (document.querySelector('#top.hero')) {
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+
+  const resetHomepagePosition = () => {
+    if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  };
+
+  window.addEventListener('pageshow', resetHomepagePosition);
+  requestAnimationFrame(resetHomepagePosition);
+}
