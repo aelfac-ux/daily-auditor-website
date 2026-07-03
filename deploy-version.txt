@@ -1,0 +1,1 @@
+2026-07-03.2 - Force GitHub Pages rebuild for English Day 07 and Day 08.
