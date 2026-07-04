@@ -12,12 +12,21 @@ if (articleSlug) rpc('record_article_view', { p_article_slug: articleSlug }).cat
 
 const popularList = document.querySelector('#popular-articles');
 if (popularList) {
+  const catalog = JSON.parse(popularList.dataset.catalog || '{}');
+  const english = document.documentElement.lang === 'en';
+  catalog['day-9-gas-twse-alert'] = {
+    title: english ? 'Build a TWSE Disclosure Email Watcher' : '用 Apps Script 打造重大訊息瞭望台',
+    href: 'articles/day-9-gas-twse-alert.html'
+  };
+  popularList.dataset.catalog = JSON.stringify(catalog);
+  popularList.innerHTML = `<li><span>NEW</span><a href="${catalog['day-9-gas-twse-alert'].href}">${catalog['day-9-gas-twse-alert'].title}</a><small>${english ? 'Latest release' : '最新發布'}</small></li>`;
+
   rpc('get_popular_articles', { p_limit: 4 }).then((items) => {
     if (!Array.isArray(items) || !items.length) return;
-    const catalog = JSON.parse(popularList.dataset.catalog || '{}');
     popularList.innerHTML = items.filter((item) => catalog[item.article_slug]).map((item, index) => {
       const article = catalog[item.article_slug];
-      return `<li><span>${String(index + 1).padStart(2, '0')}</span><a href="${article.href}">${article.title}</a><small>${Number(item.view_count).toLocaleString('zh-TW')} 次閱讀</small></li>`;
+      const countLabel = english ? `${Number(item.view_count).toLocaleString('en-US')} reads` : `${Number(item.view_count).toLocaleString('zh-TW')} 次閱讀`;
+      return `<li><span>${String(index + 1).padStart(2, '0')}</span><a href="${article.href}">${article.title}</a><small>${countLabel}</small></li>`;
     }).join('');
   }).catch(() => {});
 }

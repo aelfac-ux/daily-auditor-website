@@ -1,0 +1,86 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Practical Starter 01: use AI to draft Google Apps Script that checks TWSE material information, avoids duplicate alerts, and sends email. "><title>Build a TWSE Disclosure Email Watcher with AI and Google Apps Script | Arthur Agent</title><link rel="canonical" href="https://aelfac-ux.github.io/daily-auditor-website/en/articles/day-9-gas-twse-alert.html"><link rel="alternate" hreflang="en" href="https://aelfac-ux.github.io/daily-auditor-website/en/articles/day-9-gas-twse-alert.html"><link rel="alternate" hreflang="zh-Hant" href="https://aelfac-ux.github.io/daily-auditor-website/articles/day-9-gas-twse-alert.html"><link rel="alternate" hreflang="x-default" href="https://aelfac-ux.github.io/daily-auditor-website/articles/day-9-gas-twse-alert.html"><link rel="stylesheet" href="../../css/style.css?v=5"><link rel="stylesheet" href="../../css/features.css?v=1"><link rel="stylesheet" href="../../css/day5.css?v=1"><link rel="stylesheet" href="../../css/language.css?v=1"></head><body class="article-page" data-article-slug="day-9-gas-twse-alert"><a class="skip-link" href="#main">Skip to content</a><header class="site-header"><div class="container nav-wrap"><a class="brand" href="../index.html"><span class="brand-mark">AA</span><span>Arthur Agent Daily Audit <small>AI × AUDIT FIELD NOTES</small></span></a><nav class="site-nav"><a href="../index.html#articles">All articles</a><a class="nav-cta" href="mailto:aelfa.c@gmail.com">Send a signal</a></nav></div></header>
+<main id="main"><header class="article-hero"><div class="container"><p class="eyebrow">AI × AUDIT · DAY 09 · PRACTICAL STARTER 01</p><h1>Build a TWSE Disclosure Email Watcher with AI and Google Apps Script</h1><p class="article-deck">You do not need to become an engineer before you automate one useful watch. Define the task clearly, then let AI help put a lookout in the crow's nest.</p><div class="article-byline"><span>Arthur Agent Editorial Desk</span><time datetime="2026-07-04">July 4, 2026</time><span>13-minute read</span></div></div></header>
+<article class="container article-body"><aside class="actual-case"><span>FIELD CASE</span><strong>Opening the disclosure website and searching for company code 2330 every day is like making the captain climb the mast at dawn—heroic, theatrical, and an inefficient use of the captain.</strong><p>Our Apps Script checks public TWSE data and sends email only when it finds a disclosure that has not already been reported.</p></aside><p class="lead">For a beginner, programming starts with four questions: Where is the data? What should be selected? When should the system alert me? How will it avoid repeating itself?</p>
+<figure class="article-visual"><img src="../../images/day-9-gas-monitor-flow.svg?v=1" alt="Five-step disclosure watcher: define the task, fetch TWSE OpenAPI data, filter company code 2330, deduplicate disclosures, and send email"><figcaption>A useful watcher fetches, filters, remembers, alerts, and leaves clues when it fails.</figcaption></figure>
+<h2>What are we building?</h2><p>Google Apps Script is Google's browser-based cloud scripting platform. This project uses <code>UrlFetchApp</code> to retrieve an external public dataset and <code>MailApp</code> to send email. It never needs your Gmail password, although Google will ask you to review and authorize the required scopes on the first run.</p><p>Our source is the Taiwan Stock Exchange OpenAPI dataset for daily material information published by listed companies:</p><div class="code-example"><span>TWSE OPENAPI</span><pre><code>https://openapi.twse.com.tw/v1/opendata/t187ap04_L</code></pre></div><p>Public APIs can change fields, schedules, or availability. Recheck the official catalog before production use. This tutorial is neither a real-time trading system nor investment advice.</p>
+<h2>Give AI a seaworthy brief</h2><div class="action-box"><h2>Prompt template</h2><p>“Write Google Apps Script that reads the TWSE OpenAPI endpoint, filters company code 2330, formats date, time, subject, and explanation, and emails only disclosures that have not been sent before. Use Script Properties for deduplication, validate HTTP status and JSON shape, never request a Gmail password, add beginner comments, and explain how to create a daily time-driven trigger.”</p></div><p>A good prompt names the platform, source, filter, output, security boundary, error handling, and duplicate policy. A treasure map that says only “sail that way” is mostly an invitation to meet rocks.</p>
+<h2>Set up the project</h2><ol><li>Open <a href="https://script.google.com/">script.google.com</a> and create a project.</li><li>Set the project time zone to Asia/Taipei.</li><li>Paste the code below.</li><li>Replace <code>yourname@example.com</code> with your own address; do not publish it in a public repository.</li><li>Run <code>monitorTsmcMajorMessages</code>, review the requested permissions, and authorize only what you understand.</li><li>After a successful test, run <code>createDailyTrigger</code> once.</li></ol>
+<div class="code-example"><span>COMPLETE GOOGLE APPS SCRIPT</span><pre><code>const API_URL = "https://openapi.twse.com.tw/v1/opendata/t187ap04_L";
+const TARGET_CODE = "2330";
+const TARGET_NAME = "TSMC";
+const TO_EMAIL = "yourname@example.com";
+
+function monitorTsmcMajorMessages() {
+  const response = UrlFetchApp.fetch(API_URL, {
+    muteHttpExceptions: true,
+    headers: { Accept: "application/json" }
+  });
+  const status = response.getResponseCode();
+  if (status !== 200) throw new Error("TWSE API failed: HTTP " + status);
+
+  const raw = JSON.parse(response.getContentText("UTF-8"));
+  if (!Array.isArray(raw)) throw new Error("Unexpected API format");
+
+  const rows = raw.map(function (item) {
+    const clean = {};
+    Object.keys(item).forEach(function (key) {
+      clean[String(key).trim()] = item[key];
+    });
+    return clean;
+  });
+
+  const matches = rows.filter(function (item) {
+    return String(item["公司代號"] || "").trim() === TARGET_CODE;
+  });
+  const props = PropertiesService.getScriptProperties();
+  const newItems = matches.filter(function (item) {
+    return props.getProperty(messageId(item)) !== "sent";
+  });
+  if (newItems.length === 0) return console.log("No new disclosures");
+
+  MailApp.sendEmail({
+    to: TO_EMAIL,
+    subject: "Material information: " + TARGET_CODE + " " + TARGET_NAME,
+    body: buildEmailBody(newItems)
+  });
+  newItems.forEach(function (item) {
+    props.setProperty(messageId(item), "sent");
+  });
+}
+
+function messageId(item) {
+  const source = [item["發言日期"], item["發言時間"], item["主旨"]].join("|");
+  const bytes = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, source);
+  return "sent_" + Utilities.base64EncodeWebSafe(bytes);
+}
+
+function buildEmailBody(items) {
+  const lines = ["TWSE material-information watch", "",
+    "Company: " + TARGET_CODE + " " + TARGET_NAME,
+    "New disclosures: " + items.length, ""];
+  items.forEach(function (item, index) {
+    lines.push("Item " + (index + 1));
+    lines.push("Date: " + (item["發言日期"] || ""));
+    lines.push("Time: " + (item["發言時間"] || ""));
+    lines.push("Subject: " + (item["主旨"] || ""));
+    lines.push("Details: " + (item["說明"] || ""), "----------------", "");
+  });
+  lines.push("Source: " + API_URL);
+  return lines.join("\n");
+}
+
+function createDailyTrigger() {
+  ScriptApp.getProjectTriggers()
+    .filter(function (t) { return t.getHandlerFunction() === "monitorTsmcMajorMessages"; })
+    .forEach(function (t) { ScriptApp.deleteTrigger(t); });
+  ScriptApp.newTrigger("monitorTsmcMajorMessages")
+    .timeBased().everyDays(1).atHour(18).create();
+}</code></pre></div>
+<h2>The program's six duties</h2><ol><li>Fetch daily material information through HTTPS.</li><li>Check the HTTP response and JSON structure.</li><li>Trim field names and filter code 2330.</li><li>Create an identifier from disclosure date, time, and subject.</li><li>Email only new disclosures, then record them as sent.</li><li>Run daily through an installable time-driven trigger.</li></ol><p>Installable triggers run as the account that created them, may fire within a window around the selected hour, and remain subject to Apps Script quotas. Even an automated ship has limited provisions.</p>
+<h2>Authorization and safety</h2><ul><li><code>UrlFetchApp</code> requires external-request scope; <code>MailApp</code> requires send-mail scope.</li><li>MailApp sends mail but cannot read your Gmail inbox.</li><li>Never publish real addresses, API keys, cookies, tokens, or company data.</li><li>Inspect AI-generated code for unexpected URLs or data transmission before running it.</li><li>Monitor failure notifications and API schema changes.</li></ul>
+<h2>When the ship hits an error</h2><p>Give AI the error message, executed function, expected behavior, and actual behavior. Ask for an explanation first and the smallest correction second. Remove email addresses, project identifiers, authorization details, and private data before sharing logs. Detailed logs are useful to both debuggers and attackers.</p>
+<section class="solution-case"><span>CASE RESOLVED</span><h2>From repeated searching to reviewing only new disclosures</h2><p>The auditor tests the script manually, then creates a daily trigger. On a quiet day it sends nothing. When a new disclosure appears, it sends one message and records the identifier; later runs do not resend it. Human time goes to reading the disclosure and assessing risk—not refreshing a page.</p></section>
+<h2>Captain's verdict</h2><p>AI coding is not about becoming an engineer overnight. It is about turning “I wish someone watched this every day” into a small tool that can be executed, tested, and repaired. Start small, verify first, automate second. Keep the compass; AI is the sailor who sometimes holds the chart upside down but rows remarkably fast.</p>
+<section class="sources"><h2>Official references</h2><ul><li><a href="https://openapi.twse.com.tw/">Taiwan Stock Exchange OpenAPI</a></li><li><a href="https://developers.google.com/apps-script/reference/url-fetch/url-fetch-app">Google Apps Script: UrlFetchApp</a></li><li><a href="https://developers.google.com/apps-script/reference/mail/mail-app">Google Apps Script: MailApp</a></li><li><a href="https://developers.google.com/apps-script/guides/triggers/installable">Google Apps Script: Installable Triggers</a></li></ul></section>
+<section class="feedback-widget" data-article-slug="day-9-gas-twse-alert"><h2>Was this automated lookout useful?</h2><form><fieldset><legend>Rate it from 1–10</legend><div class="rating-scale"></div></fieldset><label>Which public source would you monitor next?<textarea name="comment" maxlength="2000" rows="4" placeholder="Do not include private email addresses, keys, or company information"></textarea></label><button class="button primary" type="submit">Send feedback</button><p class="feedback-status" role="status"></p></form></section><a class="next-article" href="../index.html"><small>PRACTICAL STARTER · NEXT NOTE IN PREPARATION</small><strong>Return to the homepage for the next treasure map</strong></a>
+</article></main><footer><div class="container footer-wrap"><p>© <span id="year"></span> Arthur Agent Daily Audit</p><p>AI × Audit Field Notes</p></div></footer><script src="../../js/main.js?v=8"></script><script type="module" src="../../js/feedback.js?v=4"></script><script type="module" src="../../js/analytics.js?v=2"></script><script src="../../js/language.js?v=1"></script></body></html>

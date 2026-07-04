@@ -1,0 +1,103 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="實作入門第一篇：讓 AI 協助撰寫 Google Apps Script，讀取證交所 OpenAPI、監控台積電重大訊息、避免重複通知並寄送 Email。"><title>用 AI 寫程式入門：用 Google Apps Script 監控重大訊息｜Arthur Agent 每日稽核</title><link rel="canonical" href="https://aelfac-ux.github.io/daily-auditor-website/articles/day-9-gas-twse-alert.html"><link rel="alternate" hreflang="zh-Hant" href="https://aelfac-ux.github.io/daily-auditor-website/articles/day-9-gas-twse-alert.html"><link rel="alternate" hreflang="en" href="https://aelfac-ux.github.io/daily-auditor-website/en/articles/day-9-gas-twse-alert.html"><link rel="alternate" hreflang="x-default" href="https://aelfac-ux.github.io/daily-auditor-website/articles/day-9-gas-twse-alert.html"><link rel="stylesheet" href="../css/style.css?v=5"><link rel="stylesheet" href="../css/features.css?v=1"><link rel="stylesheet" href="../css/day5.css?v=1"><link rel="stylesheet" href="../css/language.css?v=1"></head><body class="article-page" data-article-slug="day-9-gas-twse-alert"><a class="skip-link" href="#main">跳到主要內容</a><header class="site-header"><div class="container nav-wrap"><a class="brand" href="../index.html"><span class="brand-mark">AA</span><span>Arthur Agent 每日稽核 <small>Arthur Internal Daily Audit</small></span></a><nav class="site-nav"><a href="../index.html#articles">系列文章</a><a class="nav-cta" href="mailto:aelfa.c@gmail.com">發出訊號</a></nav></div></header>
+<main id="main"><header class="article-hero"><div class="container"><p class="eyebrow">AI × AUDIT · DAY 09 · 實作入門 01</p><h1>用 AI 寫程式入門：用 Google Apps Script 監控重大訊息並寄 Email</h1><p class="article-deck">不用先成為工程師。先把需求說清楚，再讓 AI 幫你打造一名站在桅杆上的數位瞭望手。</p><div class="article-byline"><span>Arthur Agent 編輯室</span><time datetime="2026-07-04">2026 年 7 月 4 日</time><span>約 14 分鐘閱讀</span></div></div></header>
+<article class="container article-body"><aside class="actual-case"><span>實際案例</span><strong>每天打開公開資訊觀測站搜尋 2330，就像船長每天親自爬上桅杆確認海平面——英勇，但不太聰明。這次我們讓 Google Apps Script 自動讀取證交所公開資料，只在發現尚未寄過的新公告時送出 Email。</strong><p>監控工具負責吹哨；公告內容、重要性與投資判斷仍由人確認。</p></aside><p class="lead">寫程式不一定從背語法開始。對初學者而言，第一項本領是說清楚：資料從哪裡來、要找什麼、何時通知，以及什麼情況不能重複通知。</p>
+<figure class="article-visual"><img src="../images/day-9-gas-monitor-flow.svg?v=1" alt="Google Apps Script 重大訊息監控五步流程：描述需求、讀取證交所 OpenAPI、篩選 2330、排除已寄公告、寄出 Email"><figcaption>一個能用的監控器，不只會抓資料，還要懂得去重、記錄與在失敗時留下線索。</figcaption></figure>
+<h2>第一章：這艘小艇要做什麼？</h2><p>Google Apps Script 是 Google 的雲端程式平台，可在瀏覽器中撰寫 JavaScript，並使用 Google 服務。這個案例會用 <code>UrlFetchApp</code> 讀取外部公開資料，再用 <code>MailApp</code> 寄信。它不用你的 Gmail 密碼，但第一次執行時會要求 Google 帳號授權。</p><p>API 可以想成港口的貨運窗口：網頁把資訊排給人看，API 則把結構化資料交給程式。這次使用臺灣證券交易所 OpenAPI 的「上市公司每日重大訊息」資料集：</p><div class="code-example"><span>TWSE OPENAPI</span><pre><code>https://openapi.twse.com.tw/v1/opendata/t187ap04_L</code></pre></div><p>公開 API 的欄位、更新頻率與可用性仍可能改變；正式使用前，應回到官方目錄核對。這個教學也不是即時交易系統或投資建議。</p>
+<h2>第二章：先把藏寶圖畫清楚，再叫 AI 開船</h2><div class="action-box"><h2>推薦 Prompt</h2><p>「請寫一段可在 Google Apps Script 執行的程式。讀取臺灣證券交易所 OpenAPI：<code>https://openapi.twse.com.tw/v1/opendata/t187ap04_L</code>；篩選公司代號 2330；整理發言日期、時間、主旨與說明；只把尚未通知過的新公告寄到使用者自行設定的 Email。請用 Script Properties 保存已寄送識別碼，檢查 HTTP 狀態與回傳格式，不得要求 Gmail 密碼，並以繁體中文註解。另提供建立每日時間觸發器的方法。」</p></div><p>好 Prompt 不只說「我要什麼」，也說明執行平台、資料來源、篩選條件、輸出、安全界線、錯誤處理與重複通知規則。海盜最怕的不是風浪，是一張只寫「往那邊走」的藏寶圖。</p>
+<h2>第三章：建立 Apps Script 專案</h2><ol><li>前往 <a href="https://script.google.com/">script.google.com</a>，建立新專案。</li><li>將專案時區設為 Asia/Taipei。</li><li>把下方程式貼入編輯器。</li><li>將 <code>TO_EMAIL</code> 改成自己的信箱；不要把私人信箱公開貼在網頁或程式庫。</li><li>先執行 <code>monitorTsmcMajorMessages</code>，檢視授權範圍後同意。</li><li>測試成功後執行一次 <code>createDailyTrigger</code>，建立每日排程。</li></ol>
+<h2>第四章：完整程式碼</h2><div class="code-example"><span>GOOGLE APPS SCRIPT · BEGINNER VERSION</span><pre><code>const API_URL = "https://openapi.twse.com.tw/v1/opendata/t187ap04_L";
+const TARGET_CODE = "2330";
+const TARGET_NAME = "台積電";
+const TO_EMAIL = "yourname@example.com";
+
+function monitorTsmcMajorMessages() {
+  const response = UrlFetchApp.fetch(API_URL, {
+    muteHttpExceptions: true,
+    headers: { Accept: "application/json" }
+  });
+
+  const status = response.getResponseCode();
+  if (status !== 200) throw new Error("TWSE API 回應失敗，HTTP " + status);
+
+  const raw = JSON.parse(response.getContentText("UTF-8"));
+  if (!Array.isArray(raw)) throw new Error("API 格式與預期不同");
+
+  // 去除欄位名稱前後空白，降低公開資料欄位格式變動的影響。
+  const rows = raw.map(function (item) {
+    const clean = {};
+    Object.keys(item).forEach(function (key) {
+      clean[String(key).trim()] = item[key];
+    });
+    return clean;
+  });
+
+  const matches = rows.filter(function (item) {
+    return String(item["公司代號"] || "").trim() === TARGET_CODE;
+  });
+
+  const props = PropertiesService.getScriptProperties();
+  const newItems = matches.filter(function (item) {
+    const id = messageId(item);
+    return props.getProperty(id) !== "sent";
+  });
+
+  if (newItems.length === 0) {
+    console.log("沒有尚未通知的新重大訊息");
+    return;
+  }
+
+  const body = buildEmailBody(newItems);
+  MailApp.sendEmail({
+    to: TO_EMAIL,
+    subject: "重大訊息監控：" + TARGET_CODE + " " + TARGET_NAME,
+    body: body
+  });
+
+  newItems.forEach(function (item) {
+    props.setProperty(messageId(item), "sent");
+  });
+  console.log("已寄出 " + newItems.length + " 筆新公告");
+}
+
+function messageId(item) {
+  const source = [item["發言日期"], item["發言時間"], item["主旨"]].join("|");
+  const bytes = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, source);
+  return "sent_" + Utilities.base64EncodeWebSafe(bytes);
+}
+
+function buildEmailBody(items) {
+  const checkedAt = Utilities.formatDate(new Date(), "Asia/Taipei", "yyyy-MM-dd HH:mm:ss");
+  const lines = ["重大訊息監控結果", "", "查詢時間：" + checkedAt,
+    "監控公司：" + TARGET_CODE + " " + TARGET_NAME,
+    "新公告筆數：" + items.length, ""];
+
+  items.forEach(function (item, index) {
+    lines.push("第 " + (index + 1) + " 筆");
+    lines.push("發言日期：" + (item["發言日期"] || ""));
+    lines.push("發言時間：" + (item["發言時間"] || ""));
+    lines.push("主旨：" + (item["主旨"] || ""));
+    lines.push("說明：" + (item["說明"] || ""));
+    lines.push("----------------------------------------", "");
+  });
+  lines.push("資料來源：" + API_URL);
+  return lines.join("\n");
+}
+
+function createDailyTrigger() {
+  ScriptApp.getProjectTriggers()
+    .filter(function (trigger) {
+      return trigger.getHandlerFunction() === "monitorTsmcMajorMessages";
+    })
+    .forEach(function (trigger) { ScriptApp.deleteTrigger(trigger); });
+
+  ScriptApp.newTrigger("monitorTsmcMajorMessages")
+    .timeBased().everyDays(1).atHour(18).create();
+}</code></pre></div>
+<h2>第五章：這段程式真正做了什麼？</h2><ol><li>以 HTTPS 向證交所 OpenAPI 取得每日重大訊息。</li><li>檢查 HTTP 狀態與 JSON 格式。</li><li>清理欄位名稱並篩選公司代號 2330。</li><li>以日期、時間與主旨產生識別碼，排除已寄過的公告。</li><li>只在出現新公告時寄信，寄出後才記錄為已通知。</li><li>可用時間驅動觸發器每天自動執行。</li></ol><p>時間觸發器會以建立者帳號執行，實際執行時間可能落在所選小時附近，且受 Apps Script 配額限制。這艘船是自動的，卻不是無限燃料。</p>
+<h2>第六章：授權與安全，別把船艙鑰匙丟給陌生水手</h2><ul><li><code>UrlFetchApp</code> 需要外部請求權限；<code>MailApp</code> 需要寄信權限。</li><li><code>MailApp</code> 用來寄信，不能讀取 Gmail 收件匣；仍應只授予你理解的權限。</li><li>不要在公開程式碼中留下真實 Email、API 金鑰、Cookie 或公司機密。</li><li>只從可信來源複製程式，執行前搜尋可疑外部網址與資料傳送行為。</li><li>公開資訊不等於永久穩定；應監控執行失敗通知與 API 格式變化。</li></ul>
+<h2>第七章：出錯時如何向 AI 求救</h2><p>把錯誤訊息、執行函式、預期結果與實際結果交給 AI，並要求它「先解釋原因，再提供最小修改」。送出前刪除帳號、Email、專案 ID、授權資訊與其他私人內容。完整除錯資料很好用——對攻擊者也是。</p>
+<section class="solution-case"><span>解決案例</span><h2>從每天人工搜尋，到只處理真正的新公告</h2><p>稽核人員先手動執行確認 API 與信件格式，再建立每日觸發器。隔日沒有新公告，程式安靜離場；第三日出現新公告，系統寄出一次通知並保存識別碼，後續執行不再重複寄送。人員把時間用在閱讀內容、判斷風險與決定是否展開查核，而不是反覆刷新頁面。</p></section>
+<h2>船長結語：先讓小艇離港</h2><p>AI 寫程式的價值，不是讓你一夜之間成為工程師，而是把「我希望每天有人替我看著」變成一個可執行、可測試、可修正的小工具。先做小、先驗證、再自動化。羅盤握在你手上，AI 只是那位偶爾把地圖拿反、但划船確實很快的水手。</p>
+<section class="sources"><h2>官方資料</h2><ul><li><a href="https://openapi.twse.com.tw/">臺灣證券交易所 OpenAPI</a></li><li><a href="https://developers.google.com/apps-script/reference/url-fetch/url-fetch-app">Google Apps Script：UrlFetchApp</a></li><li><a href="https://developers.google.com/apps-script/reference/mail/mail-app">Google Apps Script：MailApp</a></li><li><a href="https://developers.google.com/apps-script/guides/triggers/installable">Google Apps Script：Installable Triggers</a></li></ul></section>
+<section class="feedback-widget" data-article-slug="day-9-gas-twse-alert"><h2>這艘自動瞭望艇對你有幫助嗎？</h2><form><fieldset><legend>用 1–10 分評分</legend><div class="rating-scale"></div></fieldset><label>你下一個想監控什麼公開資訊？<textarea name="comment" maxlength="2000" rows="4" placeholder="請勿填入私人信箱、金鑰或公司機密"></textarea></label><button class="button primary" type="submit">送出回饋</button><p class="feedback-status" role="status"></p></form></section><a class="next-article" href="../index.html"><small>實作入門 · 下一篇整備中</small><strong>回到首頁，等待下一張藏寶圖</strong></a>
+</article></main><footer><div class="container footer-wrap"><p>© <span id="year"></span> Arthur Agent 每日稽核</p><p>Arthur Internal Daily Audit</p></div></footer><script src="../js/main.js?v=8"></script><script type="module" src="../js/feedback.js?v=4"></script><script type="module" src="../js/analytics.js?v=2"></script><script src="../js/language.js?v=1"></script></body></html>

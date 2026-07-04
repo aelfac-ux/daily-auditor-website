@@ -7,6 +7,15 @@ const dashboardView = document.querySelector('#dashboard-view');
 const loginStatus = document.querySelector('#login-status');
 const rows = document.querySelector('#feedback-rows');
 
+const adminActions = dashboardView.querySelector('.admin-actions');
+if (adminActions && !adminActions.querySelector('[href*="day-9-gas-twse-alert"]')) {
+  const editDay9 = document.createElement('a');
+  editDay9.className = 'button primary';
+  editDay9.href = 'https://github.com/aelfac-ux/daily-auditor-website/edit/main/articles/day-9-gas-twse-alert.html';
+  editDay9.textContent = '編輯 Day 09';
+  adminActions.insertBefore(editDay9, document.querySelector('#refresh-button'));
+}
+
 async function loadFeedback() {
   rows.innerHTML = '<tr><td colspan="4">載入中…</td></tr>';
   const { data, error } = await supabase.from('article_feedback').select('*').order('created_at', { ascending: false }).limit(500);
