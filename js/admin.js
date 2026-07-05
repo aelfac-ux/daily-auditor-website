@@ -15,6 +15,13 @@ if (adminActions && !adminActions.querySelector('[href*="day-9-gas-twse-alert"]'
   editDay9.textContent = '編輯 Day 09';
   adminActions.insertBefore(editDay9, document.querySelector('#refresh-button'));
 }
+if (adminActions && !adminActions.querySelector('[href*="day-10-apps-script-scheduling"]')) {
+  const editDay10 = document.createElement('a');
+  editDay10.className = 'button primary';
+  editDay10.href = 'https://github.com/aelfac-ux/daily-auditor-website/edit/main/articles/day-10-apps-script-scheduling.html';
+  editDay10.textContent = '編輯 Day 10';
+  adminActions.insertBefore(editDay10, document.querySelector('#refresh-button'));
+}
 
 async function loadFeedback() {
   rows.innerHTML = '<tr><td colspan="4">載入中…</td></tr>';

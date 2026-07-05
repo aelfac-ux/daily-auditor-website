@@ -18,8 +18,12 @@ if (popularList) {
     title: english ? 'Build a TWSE Disclosure Email Watcher' : '用 Apps Script 打造重大訊息瞭望台',
     href: 'articles/day-9-gas-twse-alert.html'
   };
+  catalog['day-10-apps-script-scheduling'] = {
+    title: english ? 'Make Your Disclosure Watcher Sail Every Day' : '讓重大訊息瞭望台每天自動啟航',
+    href: 'articles/day-10-apps-script-scheduling.html'
+  };
   popularList.dataset.catalog = JSON.stringify(catalog);
-  popularList.innerHTML = `<li><span>NEW</span><a href="${catalog['day-9-gas-twse-alert'].href}">${catalog['day-9-gas-twse-alert'].title}</a><small>${english ? 'Latest release' : '最新發布'}</small></li>`;
+  popularList.innerHTML = `<li><span>NEW</span><a href="${catalog['day-10-apps-script-scheduling'].href}">${catalog['day-10-apps-script-scheduling'].title}</a><small>${english ? 'Latest release' : '最新發布'}</small></li>`;
 
   rpc('get_popular_articles', { p_limit: 4 }).then((items) => {
     if (!Array.isArray(items) || !items.length) return;
