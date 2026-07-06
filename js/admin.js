@@ -22,6 +22,13 @@ if (adminActions && !adminActions.querySelector('[href*="day-10-apps-script-sche
   editDay10.textContent = '編輯 Day 10';
   adminActions.insertBefore(editDay10, document.querySelector('#refresh-button'));
 }
+if (adminActions && !adminActions.querySelector('[href*="day-11-twse-alert-field-test"]')) {
+  const editDay11 = document.createElement('a');
+  editDay11.className = 'button primary';
+  editDay11.href = 'https://github.com/aelfac-ux/daily-auditor-website/edit/main/articles/day-11-twse-alert-field-test.html';
+  editDay11.textContent = '編輯 Day 11';
+  adminActions.insertBefore(editDay11, document.querySelector('#refresh-button'));
+}
 
 async function loadFeedback() {
   rows.innerHTML = '<tr><td colspan="4">載入中…</td></tr>';

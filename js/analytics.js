@@ -22,8 +22,12 @@ if (popularList) {
     title: english ? 'Make Your Disclosure Watcher Sail Every Day' : '讓重大訊息瞭望台每天自動啟航',
     href: 'articles/day-10-apps-script-scheduling.html'
   };
+  catalog['day-11-twse-alert-field-test'] = {
+    title: english ? 'From AI Code to Your First TWSE Disclosure Email' : '從 AI 程式碼到第一封重大訊息通知',
+    href: 'articles/day-11-twse-alert-field-test.html'
+  };
   popularList.dataset.catalog = JSON.stringify(catalog);
-  popularList.innerHTML = `<li><span>NEW</span><a href="${catalog['day-10-apps-script-scheduling'].href}">${catalog['day-10-apps-script-scheduling'].title}</a><small>${english ? 'Latest release' : '最新發布'}</small></li>`;
+  popularList.innerHTML = `<li><span>NEW</span><a href="${catalog['day-11-twse-alert-field-test'].href}">${catalog['day-11-twse-alert-field-test'].title}</a><small>${english ? 'Latest release' : '最新發布'}</small></li>`;
 
   rpc('get_popular_articles', { p_limit: 4 }).then((items) => {
     if (!Array.isArray(items) || !items.length) return;

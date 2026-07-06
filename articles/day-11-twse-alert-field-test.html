@@ -1,0 +1,105 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="實作入門第三篇：用真實操作畫面完成 Apps Script 授權，監控多家公司重大訊息並成功寄出測試 Email。"><title>從 AI 程式碼到第一封重大訊息通知：Apps Script 實測｜Arthur Agent 每日稽核</title><link rel="canonical" href="https://aelfac-ux.github.io/daily-auditor-website/articles/day-11-twse-alert-field-test.html"><link rel="alternate" hreflang="zh-Hant" href="https://aelfac-ux.github.io/daily-auditor-website/articles/day-11-twse-alert-field-test.html"><link rel="alternate" hreflang="en" href="https://aelfac-ux.github.io/daily-auditor-website/en/articles/day-11-twse-alert-field-test.html"><link rel="alternate" hreflang="x-default" href="https://aelfac-ux.github.io/daily-auditor-website/articles/day-11-twse-alert-field-test.html"><link rel="stylesheet" href="../css/style.css?v=5"><link rel="stylesheet" href="../css/features.css?v=1"><link rel="stylesheet" href="../css/day5.css?v=1"><link rel="stylesheet" href="../css/language.css?v=1"></head><body class="article-page" data-article-slug="day-11-twse-alert-field-test"><a class="skip-link" href="#main">跳到主要內容</a><header class="site-header"><div class="container nav-wrap"><a class="brand" href="../index.html"><span class="brand-mark">AA</span><span>Arthur Agent 每日稽核 <small>Arthur Internal Daily Audit</small></span></a><nav class="site-nav"><a href="../index.html#articles">系列文章</a><a class="nav-cta" href="mailto:aelfa.c@gmail.com">發出訊號</a></nav></div></header>
+<main id="main"><header class="article-hero"><div class="container"><p class="eyebrow">AI × AUDIT · DAY 11 · 實作入門 03</p><h1>從 AI 程式碼到第一封重大訊息通知</h1><p class="article-deck">這次不只畫海圖：貼上程式、完成 Google 授權、查到真實重訊，再從執行紀錄確認 Email 已寄出。</p><div class="article-byline"><span>Arthur Agent 編輯室</span><time datetime="2026-07-06">2026 年 7 月 6 日</time><span>約 15 分鐘閱讀</span></div></div></header>
+<article class="container article-body"><aside class="actual-case"><span>實際案例</span><strong>程式第一次寄出 Email 時，我看了三次收件匣——不是不相信 AI，是怕它順便寄給全公司。</strong><p>本次實測監控 2330、3708、3711；OpenAPI 回傳 2 筆資料，3708 命中 1 筆，Apps Script 執行紀錄顯示郵件成功寄出。</p></aside><p class="lead">真正的入門，不是把程式碼看完，而是親手走過貼上、授權、執行、驗證與修正的完整一圈。</p>
+<h2>這次要完成的任務</h2><p>Day 09 建立公開資訊監控程式，Day 10 替它裝上排程。Day 11 回到最重要的現場：用可直接修改的測試版程式監控一個或多個上市公司代號，選擇「沒有重訊也寄測試信」，並用真實操作畫面驗證每一步。</p><div class="action-box"><h2>測試版與正式版的差別</h2><p>教學時可將 <code>sendWhenNoNews</code> 設為 <code>true</code>，確認授權、寄信與收件人都正常。正式排程建議改為 <code>false</code>，並加入 Day 09 的公告去重機制；本篇測試版沒有保存已寄送識別碼，重跑可能再次寄出同一批公告。</p></div>
+<h2>第一步：請 AI 產生可檢查的程式</h2><p>先向 AI 說清楚資料來源、股票代號、收件人、無新聞時是否寄信，以及錯誤處理。AI 的程式不是聖旨，它比較像一位字很多的大副：有用，但上船前仍要搜身。</p><figure class="article-visual"><img src="../images/day-11-step-2-ai-code.png" alt="AI 產生 Google Apps Script 程式碼的畫面"><figcaption>AI 先產生程式草稿；複製前確認資料來源、收件人、外部網址與寄信邏輯。</figcaption></figure>
+<h2>第二步：建立 Apps Script 專案並完整貼上</h2><p>前往 <a href="https://script.google.com/">Google Apps Script</a> 建立專案，刪除預設程式，再貼入完整程式。將 <code>recipients</code> 改成自己的 Email；公開分享文章或程式庫時，請使用 <code>your_email@gmail.com</code>，不要留下私人地址。</p><figure class="article-visual"><img src="../images/day-11-step-3-paste-code.png" alt="將完整重大訊息通知程式貼入 Apps Script 編輯器"><figcaption>貼上後先儲存，並確認函式選單出現 <code>sendTWSEToEmail</code>。</figcaption></figure>
+<h2>第三步：第一次執行與授權</h2><p>選擇 <code>sendTWSEToEmail</code> 並按「執行」。Google 會顯示需要授權，因為程式要連到外部 OpenAPI，並以你的身分寄 Email。</p><figure class="article-visual"><img src="../images/day-11-step-4-authorize.png" alt="Apps Script 第一次執行時顯示需要授權的畫面"><figcaption>點「審查權限」前，先確認目前專案確實是自己建立且程式碼已檢查。</figcaption></figure>
+<h2>第四步：看見「未經 Google 驗證」時，先停三秒</h2><p>個人自建 Apps Script 使用敏感權限時，可能出現未驗證警告。<strong>只有在開發者帳號是你本人、專案由你建立、程式碼來源可信且權限符合預期時</strong>，才可從進階選項繼續。若是別人傳來的陌生專案，請返回安全位置，不要把這個步驟當成萬用通行證。</p><figure class="article-visual"><img src="../images/day-11-step-5-unverified-warning.png" alt="Google 顯示應用程式未經驗證的警告頁面"><figcaption>警告不是裝飾。先核對開發者帳號與專案名稱，再決定是否繼續。</figcaption></figure>
+<h2>第五步：逐項閱讀權限，不要只看到「全選」</h2><p>本案例需要兩項核心能力：連線至外部服務，以及以你的身分傳送電子郵件。這與程式中的 <code>UrlFetchApp</code> 和 <code>MailApp</code> 相符。若畫面出現讀取 Drive、管理聯絡人等無關權限，就應回頭檢查程式。</p><figure class="article-visual"><img src="../images/day-11-step-6-scopes.png" alt="Google OAuth 同意畫面列出外部服務連線與寄送電子郵件權限"><figcaption>權限應與功能一一對應：抓公開資料需要外部連線，寄通知需要寄信權限。</figcaption></figure>
+<h2>第六步：從執行紀錄驗收，而不是只等收件匣</h2><p>這次實測結果顯示：API 回傳總筆數 2；2330 命中 0、3708 命中 1、3711 命中 0；程式隨後記錄「已寄送給」與「程式執行完成」。這證明抓取、篩選與寄信鏈路都走完。</p><figure class="article-visual"><img src="../images/day-11-step-7-success-log.png" alt="Apps Script 執行紀錄顯示 3708 命中一筆重大訊息並成功寄出 Email"><figcaption>執行紀錄是第一份證據：它說明抓到幾筆、各代號命中多少，以及是否完成寄信。</figcaption></figure>
+<h2>可直接使用的測試程式</h2><p>以下版本保留多股票、多收件人與無新聞測試信，並補上 HTTP 狀態、回傳格式、Email 格式、剩餘配額檢查；發生錯誤時會重新拋出，讓 Apps Script 正確標示失敗。</p><div class="code-example"><span>TWSE MATERIAL INFORMATION · FIELD-TEST VERSION</span><pre><code>function sendTWSEToEmail() {
+  const CONFIG = {
+    apiUrl: 'https://openapi.twse.com.tw/v1/opendata/t187ap04_L',
+    targetStocks: ['2330', '3708', '3711'],
+    sendWhenNoNews: true, // 正式使用可改 false
+    recipients: ['your_email@gmail.com'],
+    mailSubjectPrefix: '[TWSE重大訊息通知]'
+  };
+
+  try {
+    const response = UrlFetchApp.fetch(CONFIG.apiUrl, {
+      muteHttpExceptions: true,
+      headers: { Accept: 'application/json' }
+    });
+    const status = response.getResponseCode();
+    if (status !== 200) throw new Error('TWSE API 回應失敗，HTTP ' + status);
+
+    const rawData = JSON.parse(response.getContentText('UTF-8'));
+    if (!Array.isArray(rawData)) throw new Error('API 回傳格式與預期不同');
+    const data = rawData.map(cleanObjectKeys);
+    Logger.log('API 回傳總筆數：' + data.length);
+
+    const recipients = CONFIG.recipients
+      .map(email =&gt; String(email).trim())
+      .filter(email =&gt; /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email));
+    if (!recipients.length) throw new Error('請設定至少一個有效收件人');
+    if (MailApp.getRemainingDailyQuota() &lt; recipients.length) {
+      throw new Error('今日剩餘 Email 收件人配額不足');
+    }
+
+    let body = '以下是目標股票代號重大訊息查詢結果：\n\n';
+    let hasImportantNews = false;
+    const notifiedStocks = [];
+
+    CONFIG.targetStocks.forEach(stock =&gt; {
+      const companyData = data.filter(item =&gt;
+        String(item['公司代號'] || '').trim() === String(stock)
+      );
+      Logger.log('股票代號 ' + stock + ' 查詢筆數：' + companyData.length);
+
+      if (companyData.length) {
+        hasImportantNews = true;
+        notifiedStocks.push(stock);
+        body += `【股票代號 ${stock}】\n\n`;
+        companyData.forEach(item =&gt; {
+          body += `公司代號：${item['公司代號'] || stock}\n`;
+          body += `公司名稱：${item['公司名稱'] || ''}\n`;
+          body += `主旨：${item['主旨'] || ''}\n`;
+          body += `說明：${item['說明'] || ''}\n`;
+          body += `發言日期：${item['發言日期'] || ''}\n`;
+          body += `發言時間：${item['發言時間'] || ''}\n`;
+          body += `事實發生日：${item['事實發生日'] || ''}\n`;
+          body += '\n-------------------------\n\n';
+        });
+      }
+    });
+
+    if (!hasImportantNews) {
+      body += '本次沒有找到目標股票代號的重大訊息。\n';
+      body += '監控代號：' + CONFIG.targetStocks.join(', ') + '\n';
+      body += '提醒：MOPS 網頁與 OpenAPI 可能存在同步時間差。\n';
+      if (!CONFIG.sendWhenNoNews) return Logger.log('無重訊，不寄信');
+    }
+
+    const dateStr = Utilities.formatDate(
+      new Date(), Session.getScriptTimeZone(), 'yyyy/MM/dd'
+    );
+    const stocksText = hasImportantNews ? notifiedStocks.join(', ') : '無目標代號重訊';
+    const subject = `${CONFIG.mailSubjectPrefix} ${stocksText} ${dateStr}`;
+    body += '\n資料來源：\n' + CONFIG.apiUrl + '\n';
+
+    recipients.forEach(email =&gt; {
+      MailApp.sendEmail({ to: email, subject: subject, body: body });
+      Logger.log('已寄送給：' + email);
+    });
+    Logger.log('程式執行完成');
+  } catch (error) {
+    console.error(error);
+    throw error; // 讓執行紀錄與排程失敗通知正確顯示
+  }
+}
+
+function cleanObjectKeys(obj) {
+  const newObj = {};
+  Object.keys(obj).forEach(key =&gt; {
+    newObj[String(key).trim()] = obj[key];
+  });
+  return newObj;
+}</code></pre></div>
+<h2>實測後要補上的正式控制</h2><ul><li><strong>關閉測試信：</strong>正式排程將 <code>sendWhenNoNews</code> 改為 <code>false</code>。</li><li><strong>加入去重：</strong>沿用 Day 09 的 Script Properties 識別碼，避免同一公告重寄。</li><li><strong>確認市場別：</strong>本端點是上市公司資料；上櫃公司需使用對應資料來源。</li><li><strong>接受同步差：</strong>MOPS 即時頁面與 OpenAPI 可能不同步，不能把「API 沒資料」解讀成「市場沒有公告」。</li><li><strong>保護收件人：</strong>公開分享程式時移除真實 Email；大量寄送前確認配額、目的與個資規範。</li></ul>
+<section class="solution-case"><span>解決案例</span><h2>從一段 AI 程式碼，到可驗證的第一封通知</h2><p>使用者先以測試模式監控三個代號，逐項確認授權只包含外部連線與寄信。執行後，3708 命中一筆重大訊息，日誌記錄查詢筆數與寄送完成。接著將無新聞測試信關閉、加入去重，再接上 Day 10 排程，才把一次成功測試升級成可持續使用的流程。</p></section>
+<h2>船長結語</h2><p>畫面上那句「程式執行完成」不是終點，而是第一張可追溯的航海日誌。能貼上程式很棒；能理解權限、驗證結果、知道限制並為失敗留下證據，才真正把 AI 草稿變成自己的工具。</p>
+<section class="sources"><h2>官方資料</h2><ul><li><a href="https://openapi.twse.com.tw/">臺灣證券交易所 OpenAPI</a></li><li><a href="https://developers.google.com/apps-script/guides/services/authorization">Apps Script：Google 服務授權</a></li><li><a href="https://developers.google.com/apps-script/reference/mail/mail-app">Apps Script：MailApp</a></li><li><a href="https://developers.google.com/apps-script/guides/services/quotas">Apps Script：配額與限制</a></li></ul></section>
+<section class="feedback-widget" data-article-slug="day-11-twse-alert-field-test"><h2>這次實測能幫你完成第一封通知嗎？</h2><form><fieldset><legend>用 1–10 分評分</legend><div class="rating-scale"></div></fieldset><label>你在哪個畫面卡住？<textarea name="comment" maxlength="2000" rows="4" placeholder="請勿填入 Email、Google 帳號、專案 ID 或授權資訊"></textarea></label><button class="button primary" type="submit">送出回饋</button><p class="feedback-status" role="status"></p></form></section><a class="next-article" href="../index.html"><small>實作入門 · 下一篇整備中</small><strong>回到首頁，繼續打造你的自動化船隊</strong></a>
+</article></main><footer><div class="container footer-wrap"><p>© <span id="year"></span> Arthur Agent 每日稽核</p><p>Arthur Internal Daily Audit</p></div></footer><script src="../js/main.js?v=8"></script><script type="module" src="../js/feedback.js?v=4"></script><script type="module" src="../js/analytics.js?v=4"></script><script src="../js/language.js?v=1"></script></body></html>
