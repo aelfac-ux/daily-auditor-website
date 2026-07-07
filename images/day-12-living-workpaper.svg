@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" role="img" aria-labelledby="title desc">
+<title id="title">AI 時代工作底稿的四層結構</title><desc id="desc">資料血緣、AI互動紀錄、人工專業判斷與可重建性驗證依序堆疊，最後形成可覆核的結論。</desc>
+<rect width="1200" height="720" rx="32" fill="#f5efe2"/><text x="600" y="75" text-anchor="middle" font-family="sans-serif" font-size="38" font-weight="700" fill="#173c36">活的工作底稿｜LIVING WORKPAPER</text>
+<g font-family="sans-serif"><rect x="125" y="130" width="950" height="105" rx="18" fill="#173c36"/><text x="165" y="177" font-size="28" font-weight="700" fill="#fff">01　資料血緣 · DATA LINEAGE</text><text x="165" y="211" font-size="20" fill="#d8eee8">來源、匯出時間、查詢條件、清理步驟、程式版本</text>
+<rect x="125" y="250" width="950" height="105" rx="18" fill="#28665c"/><text x="165" y="297" font-size="28" font-weight="700" fill="#fff">02　AI 互動紀錄 · PROMPT &amp; OUTPUT</text><text x="165" y="331" font-size="20" fill="#e8f4f1">提示詞、原始輸出、模型版本、使用時間、人工修改</text>
+<rect x="125" y="370" width="950" height="105" rx="18" fill="#b76e3c"/><text x="165" y="417" font-size="28" font-weight="700" fill="#fff">03　人工專業判斷 · HUMAN JUDGMENT</text><text x="165" y="451" font-size="20" fill="#fff4ea">採用、修改或否決的理由，補充證據與主管覆核</text>
+<rect x="125" y="490" width="950" height="105" rx="18" fill="#263747"/><text x="165" y="537" font-size="28" font-weight="700" fill="#fff">04　可重建性 · REPRODUCIBILITY</text><text x="165" y="571" font-size="20" fill="#e6edf3">能否以相同條件重建；差異、限制與例外誠實留痕</text>
+<path d="M600 605v45" stroke="#173c36" stroke-width="8"/><path d="m580 640 20 28 20-28" fill="#173c36"/><text x="600" y="700" text-anchor="middle" font-size="25" font-weight="700" fill="#173c36">可理解 · 可追溯 · 可覆核</text></g></svg>

@@ -29,6 +29,13 @@ if (adminActions && !adminActions.querySelector('[href*="day-11-twse-alert-field
   editDay11.textContent = '編輯 Day 11';
   adminActions.insertBefore(editDay11, document.querySelector('#refresh-button'));
 }
+if (adminActions && !adminActions.querySelector('[href*="day-12-ai-era-working-papers"]')) {
+  const editDay12 = document.createElement('a');
+  editDay12.className = 'button primary';
+  editDay12.href = 'https://github.com/aelfac-ux/daily-auditor-website/edit/main/articles/day-12-ai-era-working-papers.html';
+  editDay12.textContent = '編輯 Day 12';
+  adminActions.insertBefore(editDay12, document.querySelector('#refresh-button'));
+}
 
 async function loadFeedback() {
   rows.innerHTML = '<tr><td colspan="4">載入中…</td></tr>';

@@ -26,8 +26,12 @@ if (popularList) {
     title: english ? 'From AI Code to Your First TWSE Disclosure Email' : '從 AI 程式碼到第一封重大訊息通知',
     href: 'articles/day-11-twse-alert-field-test.html'
   };
+  catalog['day-12-ai-era-working-papers'] = {
+    title: english ? 'What Will AI-Era Working Papers Look Like?' : 'AI 時代的工作底稿將長什麼樣子？',
+    href: 'articles/day-12-ai-era-working-papers.html'
+  };
   popularList.dataset.catalog = JSON.stringify(catalog);
-  popularList.innerHTML = `<li><span>NEW</span><a href="${catalog['day-11-twse-alert-field-test'].href}">${catalog['day-11-twse-alert-field-test'].title}</a><small>${english ? 'Latest release' : '最新發布'}</small></li>`;
+  popularList.innerHTML = `<li><span>NEW</span><a href="${catalog['day-12-ai-era-working-papers'].href}">${catalog['day-12-ai-era-working-papers'].title}</a><small>${english ? 'Latest release' : '最新發布'}</small></li>`;
 
   rpc('get_popular_articles', { p_limit: 4 }).then((items) => {
     if (!Array.isArray(items) || !items.length) return;
