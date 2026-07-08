@@ -36,6 +36,13 @@ if (adminActions && !adminActions.querySelector('[href*="day-12-ai-era-working-p
   editDay12.textContent = '編輯 Day 12';
   adminActions.insertBefore(editDay12, document.querySelector('#refresh-button'));
 }
+if (adminActions && !adminActions.querySelector('[href*="day-13-minerva-ai-audit-reasoning"]')) {
+  const editDay13 = document.createElement('a');
+  editDay13.className = 'button primary';
+  editDay13.href = 'https://github.com/aelfac-ux/daily-auditor-website/edit/main/articles/day-13-minerva-ai-audit-reasoning.html';
+  editDay13.textContent = '編輯 Day 13';
+  adminActions.insertBefore(editDay13, document.querySelector('#refresh-button'));
+}
 
 async function loadFeedback() {
   rows.innerHTML = '<tr><td colspan="4">載入中…</td></tr>';

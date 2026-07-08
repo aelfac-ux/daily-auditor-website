@@ -30,8 +30,12 @@ if (popularList) {
     title: english ? 'What Will AI-Era Working Papers Look Like?' : 'AI 時代的工作底稿將長什麼樣子？',
     href: 'articles/day-12-ai-era-working-papers.html'
   };
+  catalog['day-13-minerva-ai-audit-reasoning'] = {
+    title: english ? 'If AI Can Draft the Paper, What Is the Auditor For?' : 'AI 能寫漂亮底稿，稽核人員還剩下什麼？',
+    href: 'articles/day-13-minerva-ai-audit-reasoning.html'
+  };
   popularList.dataset.catalog = JSON.stringify(catalog);
-  popularList.innerHTML = `<li><span>NEW</span><a href="${catalog['day-12-ai-era-working-papers'].href}">${catalog['day-12-ai-era-working-papers'].title}</a><small>${english ? 'Latest release' : '最新發布'}</small></li>`;
+  popularList.innerHTML = `<li><span>NEW</span><a href="${catalog['day-13-minerva-ai-audit-reasoning'].href}">${catalog['day-13-minerva-ai-audit-reasoning'].title}</a><small>${english ? 'Latest release' : '最新發布'}</small></li>`;
 
   rpc('get_popular_articles', { p_limit: 4 }).then((items) => {
     if (!Array.isArray(items) || !items.length) return;
