@@ -34,8 +34,12 @@ if (popularList) {
     title: english ? 'If AI Can Draft the Paper, What Is the Auditor For?' : 'AI 能寫漂亮底稿，稽核人員還剩下什麼？',
     href: 'articles/day-13-minerva-ai-audit-reasoning.html'
   };
+  catalog['day-14-minerva-long-term-memory'] = {
+    title: english ? 'Minerva Thinking Models: Train AI Long-Term Memory as a Reasoning Library' : '密涅瓦思維模型：把 AI 長期記憶訓練成推理習慣庫',
+    href: 'articles/day-14-minerva-long-term-memory.html'
+  };
   popularList.dataset.catalog = JSON.stringify(catalog);
-  popularList.innerHTML = `<li><span>NEW</span><a href="${catalog['day-13-minerva-ai-audit-reasoning'].href}">${catalog['day-13-minerva-ai-audit-reasoning'].title}</a><small>${english ? 'Latest release' : '最新發布'}</small></li>`;
+  popularList.innerHTML = `<li><span>NEW</span><a href="${catalog['day-14-minerva-long-term-memory'].href}">${catalog['day-14-minerva-long-term-memory'].title}</a><small>${english ? 'Latest release' : '最新發布'}</small></li>`;
 
   rpc('get_popular_articles', { p_limit: 4 }).then((items) => {
     if (!Array.isArray(items) || !items.length) return;

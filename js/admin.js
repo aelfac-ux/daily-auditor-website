@@ -43,6 +43,13 @@ if (adminActions && !adminActions.querySelector('[href*="day-13-minerva-ai-audit
   editDay13.textContent = '編輯 Day 13';
   adminActions.insertBefore(editDay13, document.querySelector('#refresh-button'));
 }
+if (adminActions && !adminActions.querySelector('[href*="day-14-minerva-long-term-memory"]')) {
+  const editDay14 = document.createElement('a');
+  editDay14.className = 'button primary';
+  editDay14.href = 'https://github.com/aelfac-ux/daily-auditor-website/edit/main/articles/day-14-minerva-long-term-memory.html';
+  editDay14.textContent = '編輯 Day 14';
+  adminActions.insertBefore(editDay14, document.querySelector('#refresh-button'));
+}
 
 async function loadFeedback() {
   rows.innerHTML = '<tr><td colspan="4">載入中…</td></tr>';
